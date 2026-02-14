@@ -5,8 +5,14 @@ import { Input } from "@/components/ui/input";
 import { Plus, Target, TrendingUp, CheckCircle2 } from "lucide-react";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
+import { useDemo } from "@/contexts/DemoContext";
+import { useAuth } from "@/_core/hooks/useAuth";
+import { mockGoals } from "@/lib/mockData";
 
 export default function Goals() {
+  const { isDemoMode } = useDemo();
+  const { user } = useAuth();
+  
   const [showNewGoal, setShowNewGoal] = useState(false);
   const [newGoalTitle, setNewGoalTitle] = useState("");
   const [newGoalType, setNewGoalType] = useState("hours");
@@ -65,6 +71,14 @@ export default function Goals() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-cyan-50 p-6">
       <div className="max-w-4xl mx-auto">
+        {isDemoMode && (
+          <div className="bg-blue-50 border-l-4 border-blue-500 p-4 mb-6 rounded">
+            <p className="text-sm text-blue-700">
+              <strong>Demo Mode:</strong> Viewing sample goals. Sign in to set your own goals.
+            </p>
+          </div>
+        )}
+        
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div>

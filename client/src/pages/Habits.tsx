@@ -5,8 +5,14 @@ import { Input } from "@/components/ui/input";
 import { Plus, Flame, CheckCircle2, Circle } from "lucide-react";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
+import { useDemo } from "@/contexts/DemoContext";
+import { useAuth } from "@/_core/hooks/useAuth";
+import { mockHabits } from "@/lib/mockData";
 
 export default function Habits() {
+  const { isDemoMode } = useDemo();
+  const { user } = useAuth();
+  
   const [showNewHabit, setShowNewHabit] = useState(false);
   const [newHabitName, setNewHabitName] = useState("");
   const [newHabitEmoji, setNewHabitEmoji] = useState("✨");
@@ -70,6 +76,14 @@ export default function Habits() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-50 p-6">
       <div className="max-w-4xl mx-auto">
+        {isDemoMode && (
+          <div className="bg-blue-50 border-l-4 border-blue-500 p-4 mb-6 rounded">
+            <p className="text-sm text-blue-700">
+              <strong>Demo Mode:</strong> Viewing sample habits. Sign in to track your own habits.
+            </p>
+          </div>
+        )}
+        
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div>

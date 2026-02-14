@@ -1,9 +1,10 @@
 import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import { Clock, Zap, Target, TrendingUp, Award } from "lucide-react";
 import { getLoginUrl } from "@/const";
+import { useDemo } from "@/contexts/DemoContext";
 
 export default function Home() {
   const { user, loading, isAuthenticated } = useAuth();
@@ -42,9 +43,12 @@ export default function Home() {
               Combine the Pomodoro technique with habit tracking, ambient sounds, and goal management
               for a complete wellness experience.
             </p>
-            <Button asChild size="lg" className="bg-orange-600 hover:bg-orange-700">
-              <a href={getLoginUrl()}>Get Started</a>
-            </Button>
+            <div className="flex gap-4 justify-center">
+              <Button asChild size="lg" className="bg-orange-600 hover:bg-orange-700">
+                <a href={getLoginUrl()}>Sign In</a>
+              </Button>
+              <DemoButton />
+            </div>
           </div>
 
           {/* Features Grid */}
@@ -172,5 +176,26 @@ export default function Home() {
         </div>
       </div>
     </div>
+  );
+}
+
+function DemoButton() {
+  const { setIsDemoMode } = useDemo();
+  const [, setLocation] = useLocation();
+
+  const handleDemo = () => {
+    setIsDemoMode(true);
+    setLocation("/pomodoro");
+  };
+
+  return (
+    <Button
+      onClick={handleDemo}
+      size="lg"
+      variant="outline"
+      className="border-orange-600 text-orange-600 hover:bg-orange-50"
+    >
+      Explore Demo
+    </Button>
   );
 }

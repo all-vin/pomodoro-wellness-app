@@ -122,3 +122,13 @@
 - [ ] Test on production-like environment (em progresso)
 - [ ] Document API endpoints (em progresso)
 - [ ] Create user guide/onboarding (em progresso)
+
+
+## Modo Demo / Navegacao Anonima
+- [x] Criar contexto DemoMode para gerenciar estado anonimo
+- [x] Adicionar dados mock para habitos, metas, achievements
+- [x] Atualizar Home.tsx com botao "Explore Demo"
+- [x] Criar versoes demo de todas as paginas (Pomodoro, Habits, Goals, Achievements, Reports)
+- [x] Adicionar indicador visual de modo demo (banner azul em todas as paginas)
+- [x] Permitir navegacao completa sem autenticacao
+- [x] Testar fluxo completo de navegacao anonima

@@ -4,6 +4,8 @@ import { Card } from "@/components/ui/card";
 import { Slider } from "@/components/ui/slider";
 import { Play, Pause, RotateCcw, Volume2 } from "lucide-react";
 import { trpc } from "@/lib/trpc";
+import { useDemo } from "@/contexts/DemoContext";
+import { useAuth } from "@/_core/hooks/useAuth";
 
 const AMBIENT_SOUNDS = [
   { id: "rain", name: "Rain", icon: "🌧️" },
@@ -22,6 +24,9 @@ const POMODORO_CYCLES = [
 ];
 
 export default function PomodoroTimer() {
+  const { isDemoMode } = useDemo();
+  const { user } = useAuth();
+  
   const [isRunning, setIsRunning] = useState(false);
   const [isBreak, setIsBreak] = useState(false);
   const [timeLeft, setTimeLeft] = useState(25 * 60);
@@ -54,8 +59,7 @@ export default function PomodoroTimer() {
   const handleTimerComplete = async () => {
     setIsRunning(false);
 
-    if (!isBreak) {
-      // Save session to database
+    if (!isBreak && !isDemoMode && user) {
       try {
         await pomodoroSessionsMutation.mutateAsync({
           focusDuration,
@@ -63,27 +67,19 @@ export default function PomodoroTimer() {
           soundAmbient: selectedSound,
           volumeLevel: soundVolume,
         });
-        
-        // Mark session as completed
-        // This will be handled by the update mutation
       } catch (error) {
         console.error("Failed to save session:", error);
       }
-
-      setSessionsCompleted((prev) => prev + 1);
-      setIsBreak(true);
-      setTimeLeft(breakDuration * 60);
-    } else {
-      setIsBreak(false);
-      setTimeLeft(focusDuration * 60);
     }
 
-    // Play notification sound
+    setSessionsCompleted((prev) => prev + 1);
+    setIsBreak(true);
+    setTimeLeft(breakDuration * 60);
+
     playNotificationSound();
   };
 
   const playNotificationSound = () => {
-    // Using Web Audio API for notification
     const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
     const oscillator = audioContext.createOscillator();
     const gain = audioContext.createGain();
@@ -134,6 +130,14 @@ export default function PomodoroTimer() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-amber-50 to-orange-50 p-6">
       <div className="max-w-2xl mx-auto">
+        {isDemoMode && (
+          <div className="bg-blue-50 border-l-4 border-blue-500 p-4 mb-6 rounded">
+            <p className="text-sm text-blue-700">
+              <strong>Demo Mode:</strong> You are exploring the app without logging in. Data will not be saved.
+            </p>
+          </div>
+        )}
+
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-gray-800 mb-2">Pomodoro Timer</h1>
@@ -163,7 +167,6 @@ export default function PomodoroTimer() {
         {/* Timer Display */}
         <Card className="p-8 mb-8 bg-white shadow-lg">
           <div className="relative w-64 h-64 mx-auto mb-6">
-            {/* Circular Progress */}
             <svg className="w-full h-full transform -rotate-90" viewBox="0 0 200 200">
               <circle
                 cx="100"
@@ -185,7 +188,6 @@ export default function PomodoroTimer() {
               />
             </svg>
 
-            {/* Time Display */}
             <div className="absolute inset-0 flex items-center justify-center">
               <div className="text-center">
                 <div className="text-6xl font-bold text-gray-800 font-mono">

@@ -2,6 +2,9 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { trpc } from "@/lib/trpc";
 import { Lock, Unlock, Star } from "lucide-react";
+import { useDemo } from "@/contexts/DemoContext";
+import { useAuth } from "@/_core/hooks/useAuth";
+import { mockAchievements } from "@/lib/mockData";
 
 const ACHIEVEMENTS = [
   {
@@ -77,6 +80,9 @@ const ACHIEVEMENTS = [
 ];
 
 export default function Achievements() {
+  const { isDemoMode } = useDemo();
+  const { user } = useAuth();
+  
   const { data: achievements, isLoading } = trpc.achievements.list.useQuery();
 
   if (isLoading) {
@@ -94,6 +100,13 @@ export default function Achievements() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-50 p-6">
       <div className="max-w-6xl mx-auto">
+        {isDemoMode && (
+          <div className="bg-blue-50 border-l-4 border-blue-500 p-4 mb-6 rounded">
+            <p className="text-sm text-blue-700">
+              <strong>Demo Mode:</strong> Viewing sample achievements. Sign in to unlock your own achievements.
+            </p>
+          </div>
+        )}
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-gray-900">Achievements</h1>

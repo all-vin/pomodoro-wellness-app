@@ -4,6 +4,8 @@ import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, L
 import { Calendar, TrendingUp, Clock, Zap } from "lucide-react";
 import { trpc } from "@/lib/trpc";
 import { useState } from "react";
+import { useDemo } from "@/contexts/DemoContext";
+import { useAuth } from "@/_core/hooks/useAuth";
 
 const CHART_COLORS = ["#f97316", "#10b981", "#3b82f6", "#8b5cf6", "#ec4899"];
 
@@ -25,6 +27,9 @@ const mockHabitData = [
 ];
 
 export default function Reports() {
+  const { isDemoMode } = useDemo();
+  const { user } = useAuth();
+  
   const [period, setPeriod] = useState<"daily" | "weekly" | "monthly">("weekly");
   const { data: reports, isLoading } = trpc.reports.list.useQuery({ period });
 
@@ -41,6 +46,13 @@ export default function Reports() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-blue-50 p-6">
       <div className="max-w-6xl mx-auto">
+        {isDemoMode && (
+          <div className="bg-blue-50 border-l-4 border-blue-500 p-4 mb-6 rounded">
+            <p className="text-sm text-blue-700">
+              <strong>Demo Mode:</strong> Viewing sample reports. Sign in to see your own productivity data.
+            </p>
+          </div>
+        )}
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-gray-900">Productivity Reports</h1>
